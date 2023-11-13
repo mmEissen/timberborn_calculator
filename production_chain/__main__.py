@@ -1,9 +1,10 @@
 import fractions
-from production_chain import production_chain
+from production_chain import production_chain, visualize
 
 game_data = production_chain.load_game_data()
 
 
-chains = production_chain.compute_chains_for_product("Bot", fractions.Fraction(1), game_data.folktails)
+chain = production_chain.compute_chains_for_facility("Bot Assembler", 4, game_data.folktails)
 
-print(chains)
+print(chain)
+visualize.directed_graph(chain).view(cleanup=True)

@@ -42,8 +42,12 @@ class Faction(pydantic.BaseModel):
     power_plants: list[PowerPlant]
 
     def facilities_producing(self, product: str) -> list[Facility]:
-        return [facility for facility in self.facilities if product in facility.possible_products()]
-    
+        return [
+            facility
+            for facility in self.facilities
+            if product in facility.possible_products()
+        ]
+
     def recipes_producing(self, product: str) -> list[Recipe]:
         return [
             recipe
@@ -51,12 +55,18 @@ class Faction(pydantic.BaseModel):
             for recipe in facility.recipes
             if product in recipe.products()
         ]
-    
+
     def facility_with_recipe(self, recipe: Recipe) -> Facility:
         for facility in self.facilities:
             if facility.has_recipe(recipe):
                 return facility
         raise ValueError("No such recipe in this faction")
+
+    def facility_by_name(self, name: str) -> Facility:
+        for facility in self.facilities:
+            if facility.name == name:
+                return facility
+        raise ValueError("No such facility in this faction")
 
 
 class Facility(pydantic.BaseModel):
@@ -72,10 +82,10 @@ class Facility(pydantic.BaseModel):
         return functools.reduce(
             lambda a, b: a | b, (recipe.products() for recipe in self.recipes)
         )
-    
+
     def recipes_for_product(self, product: str) -> list[Recipe]:
         return [recipe for recipe in self.recipes if product in recipe.products()]
-    
+
     def has_recipe(self, recipe: Recipe) -> bool:
         return recipe in self.recipes
 
@@ -122,11 +132,25 @@ class ProductionChain:
     inputs: dict[str, list[ProductionChain]]
 
 
+
+def compute_chains_for_facility(
+    facility_name: str, number_facilities: int, faction: Faction
+) -> list[ProductionChain]:
+    facility = faction.facility_by_name(facility_name)
+    if len(facility.recipes) != 1:
+        raise ValueError("Not sure which recipe")
+    recipe = facility.recipes[0]
+
+    return compute_chain(
+        recipe=recipe, number_facilities=Fraction(number_facilities), faction=faction
+    )
+
+
 def compute_chains_for_product(
     product: str, target_amount_per_hour: Fraction, faction: Faction
 ) -> list[ProductionChain]:
     possible_recipes = faction.recipes_producing(product)
-    
+
     return [
         compute_chain(
             recipe, target_amount_per_hour / recipe.per_hour(product), faction
@@ -140,7 +164,11 @@ def compute_chain(
 ) -> ProductionChain:
     facility = faction.facility_with_recipe(recipe)
     inputs = {
-        required_resource: compute_chains_for_product(required_resource, required_amount, faction)
+        required_resource: compute_chains_for_product(
+            required_resource,
+            required_amount * number_facilities / recipe.time,
+            faction,
+        )
         for required_resource, required_amount in recipe.requirements.items()
     }
     return ProductionChain(

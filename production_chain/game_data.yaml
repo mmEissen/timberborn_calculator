@@ -99,6 +99,42 @@ folktails:
             Logs: 8
           time: 720
           requirements: {}
+    - name: Pine
+      power: 0
+      workers: 0
+      recipes:
+        - name: Pine Resin
+          output: 
+            Pine Resin: 2
+          time: 168
+          requirements: {}
+        - name: Logs
+          output: 
+            Logs: 2
+          time: 288
+          requirements: {}
+    - name: Mine
+      power: 0
+      workers: 10
+      recipes:
+        - name: Scrap Metal
+          output: 
+            Scrap Metal: 2
+          time: 1 + 4/5
+          requirements:
+            Gears: 1
+            Treated Planks: 1
+    - name: Wood Workshop
+      power: 0
+      workers: 10
+      recipes:
+        - name: Treated Planks
+          output: 
+            Treated Planks: 1
+          time: 1 + 4/5
+          requirements:
+            Planks: 1
+            Pine Resin: 1
 
   power_plants:
     - name: Large Windmill
