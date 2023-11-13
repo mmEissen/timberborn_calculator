@@ -27,33 +27,81 @@ def to_fraction(value: Any) -> Fraction:
 PydanticFraction = Annotated[Fraction, pydantic.BeforeValidator(to_fraction)]
 
 
+class GameData(pydantic.BaseModel):
+    class Config:
+        arbitrary_types_allowed = True
+
+    folktails: Faction
+
+
+class Faction(pydantic.BaseModel):
+    class Config:
+        arbitrary_types_allowed = True
+
+    facilities: list[Facility]
+    power_plants: list[PowerPlant]
+
+    def facilities_producing(self, product: str) -> list[Facility]:
+        return [facility for facility in self.facilities if product in facility.possible_products()]
+    
+    def recipes_producing(self, product: str) -> list[Recipe]:
+        return [
+            recipe
+            for facility in self.facilities
+            for recipe in facility.recipes
+            if product in recipe.products()
+        ]
+    
+    def facility_with_recipe(self, recipe: Recipe) -> Facility:
+        for facility in self.facilities:
+            if facility.has_recipe(recipe):
+                return facility
+        raise ValueError("No such recipe in this faction")
+
+
 class Facility(pydantic.BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
     name: str
-    product: str
-    produced_amount: int
-    requirements: dict[str, PydanticFraction]
-    time: PydanticFraction
+    recipes: list[Recipe]
+    workers: int
+    power: PydanticFraction
 
-    def amount_per_hour(self) -> Decimal:
-        return self.produced_amount / self.time
+    def possible_products(self) -> set[str]:
+        return functools.reduce(
+            lambda a, b: a | b, (recipe.products() for recipe in self.recipes)
+        )
+    
+    def recipes_for_product(self, product: str) -> list[Recipe]:
+        return [recipe for recipe in self.recipes if product in recipe.products()]
+    
+    def has_recipe(self, recipe: Recipe) -> bool:
+        return recipe in self.recipes
 
 
 class Recipe(pydantic.BaseModel):
     class Config:
         arbitrary_types_allowed = True
-    
-    products: dict[str, PydanticFraction]
+
+    name: str
+    output: dict[str, PydanticFraction]
     requirements: dict[str, PydanticFraction]
     time: PydanticFraction
 
+    def per_hour(self, product: str) -> Fraction:
+        return self.output[product] / self.time
 
-@dataclasses.dataclass
-class GameData:
-    products: set[str]
-    facilities: dict[str, Facility]
+    def products(self) -> set[str]:
+        return set(self.output)
+
+
+class PowerPlant(pydantic.BaseModel):
+    class Config:
+        arbitrary_types_allowed = True
+
+    name: str
+    output: PydanticFraction
 
 
 DATA_FILE = path.join(path.dirname(__file__), "game_data.yaml")
@@ -63,67 +111,41 @@ def load_game_data() -> GameData:
     with open(DATA_FILE) as data_file:
         data = yaml.safe_load(data_file)
 
-    facilities = [
-        Facility(**production_data) for production_data in data["facilities"]
-    ]
-    return GameData(
-        products={production.product for production in facilities}
-        | {
-            product for facility in facilities for product in facility.requirements
-        },
-        facilities={facility.product: facility for facility in facilities},
-    )
+    return GameData(**data)
 
 
 @dataclasses.dataclass
 class ProductionChain:
     facility: Facility
+    recipe: Recipe
     number_facilities: Fraction
-    inputs: list[ProductionChain]
+    inputs: dict[str, list[ProductionChain]]
 
-    def str_tree(self, indent: str = "") -> str:
-        return f"{indent}{self.facility.name} x {self.number_facilities}\n" + "".join(
-            production_chain.str_tree(indent + "  ") for production_chain in self.inputs
-        )
+
+def compute_chains_for_product(
+    product: str, target_amount_per_hour: Fraction, faction: Faction
+) -> list[ProductionChain]:
+    possible_recipes = faction.recipes_producing(product)
     
-    def str_totals(self) -> str:
-        return "\n".join(f"{production} x {amount} (~{float(amount):.2f})" for production, amount in self.totals().items())
-
-    def totals(self) -> dict[str, Fraction]:
-        def add_totals(
-            left: dict[str, Fraction], right: dict[str, Fraction]
-        ) -> dict[str, Fraction]:
-            result = left.copy()
-            for production, amount in right.items():
-                result[production] = result.setdefault(production, Fraction()) + amount
-            return result
-
-        return functools.reduce(add_totals, [p.totals() for p in self.inputs], {self.facility.name: self.number_facilities})
-
-
-def compute_chain_for_product(
-    product: str, number_facilities: int, game_data: GameData
-) -> ProductionChain:
-    production = game_data.facilities[product]
-    return compute_chain(
-        production, production.amount_per_hour() * number_facilities, game_data
-    )
+    return [
+        compute_chain(
+            recipe, target_amount_per_hour / recipe.per_hour(product), faction
+        )
+        for recipe in possible_recipes
+    ]
 
 
 def compute_chain(
-    production: Facility, target_amount_per_hour: Decimal, game_data: GameData
+    recipe: Recipe, number_facilities: Fraction, faction: Faction
 ) -> ProductionChain:
-    number_facilities = target_amount_per_hour / production.amount_per_hour()
+    facility = faction.facility_with_recipe(recipe)
+    inputs = {
+        required_resource: compute_chains_for_product(required_resource, required_amount, faction)
+        for required_resource, required_amount in recipe.requirements.items()
+    }
     return ProductionChain(
-        facility=production,
+        facility=facility,
+        recipe=recipe,
         number_facilities=number_facilities,
-        inputs=[
-            compute_chain(
-                production=game_data.facilities[required_product],
-                target_amount_per_hour=number_facilities * required_amount / production.time,
-                game_data=game_data,
-            )
-            for required_product, required_amount in production.requirements.items()
-            if required_product in game_data.facilities
-        ],
+        inputs=inputs,
     )
