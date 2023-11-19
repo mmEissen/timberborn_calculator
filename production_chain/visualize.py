@@ -38,6 +38,4 @@ def grouped_graph(chain: ProductionChain) -> graphviz.Digraph:
         }
     )
 
-
-
     return graph

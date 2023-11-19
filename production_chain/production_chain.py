@@ -1,10 +1,10 @@
 from __future__ import annotations
 import dataclasses
-from decimal import Decimal
 from fractions import Fraction
 import functools
+import inspect
 from os import path
-from typing import Annotated, Any
+from typing import Any
 import yaml
 
 import pydantic
@@ -24,14 +24,16 @@ def to_fraction(value: Any) -> Fraction:
     return integer + fraction
 
 
-PydanticFraction = Annotated[Fraction, pydantic.BeforeValidator(to_fraction)]
-
-
 class GameData(pydantic.BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
     folktails: Faction
+
+    def get_faction(self, name: str) -> Faction:
+        if name == "folktails":
+            return self.folktails
+        raise ValueError("Unknown faction")
 
 
 class Faction(pydantic.BaseModel):
@@ -76,7 +78,11 @@ class Facility(pydantic.BaseModel):
     name: str
     recipes: list[Recipe]
     workers: int
-    power: PydanticFraction
+    power: Fraction
+
+    _power_to_fraction = pydantic.validator("power", pre=True, allow_reuse=True)(
+        to_fraction
+    )
 
     def possible_products(self) -> set[str]:
         return functools.reduce(
@@ -95,9 +101,19 @@ class Recipe(pydantic.BaseModel):
         arbitrary_types_allowed = True
 
     name: str
-    output: dict[str, PydanticFraction]
-    requirements: dict[str, PydanticFraction]
-    time: PydanticFraction
+    output: dict[str, Fraction]
+    requirements: dict[str, Fraction]
+    time: Fraction
+
+    _output_to_fraction = pydantic.validator(
+        "output", pre=True, allow_reuse=True, each_item=True
+    )(to_fraction)
+    _requirements_to_fraction = pydantic.validator(
+        "requirements", pre=True, allow_reuse=True, each_item=True
+    )(to_fraction)
+    _time_to_fraction = pydantic.validator("time", pre=True, allow_reuse=True)(
+        to_fraction
+    )
 
     def per_hour(self, product: str) -> Fraction:
         return self.output[product] / self.time
@@ -111,7 +127,16 @@ class PowerPlant(pydantic.BaseModel):
         arbitrary_types_allowed = True
 
     name: str
-    output: PydanticFraction
+    output: Fraction
+
+    _output_to_fraction = pydantic.validator("output", pre=True, allow_reuse=True)(
+        to_fraction
+    )
+
+
+for _global in list(globals().values()):
+    if inspect.isclass(_global) and issubclass(_global, pydantic.BaseModel):
+        _global.update_forward_refs()
 
 
 DATA_FILE = path.join(path.dirname(__file__), "game_data.yaml")
@@ -131,6 +156,9 @@ class ProductionChain:
     number_facilities: Fraction
     inputs: dict[str, list[ProductionChain]]
 
+    _number_facilities_to_fraction = pydantic.validator(
+        "number_facilities", pre=True, allow_reuse=True
+    )(to_fraction)
 
 
 def compute_chains_for_facility(

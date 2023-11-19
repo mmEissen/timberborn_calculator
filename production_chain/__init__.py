@@ -1,0 +1,1 @@
+from production_chain.main import dot_graph
