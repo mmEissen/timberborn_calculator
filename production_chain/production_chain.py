@@ -34,6 +34,9 @@ class GameData(pydantic.BaseModel):
         if name == "folktails":
             return self.folktails
         raise ValueError("Unknown faction")
+    
+    def get_factions(self) -> list[str]:
+        return ["folktails"]
 
 
 class Faction(pydantic.BaseModel):
