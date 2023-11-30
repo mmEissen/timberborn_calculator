@@ -5,6 +5,8 @@ export const TimberbornContext = createContext<Timberborn>(null);
 
 export interface Timberborn {
     getFactions: () => string[]
+    getProducts: (faction: string) => string[]
+    dotGraph: (faction: string, products: string) => string
 }
 
 export async function createPyodideContext() : Promise<Timberborn> {

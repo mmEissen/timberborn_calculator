@@ -34,9 +34,12 @@ class GameData(pydantic.BaseModel):
         if name == "folktails":
             return self.folktails
         raise ValueError("Unknown faction")
-    
+
     def get_factions(self) -> list[str]:
         return ["folktails"]
+
+    def get_products(self, faction: str) -> set[str]:
+        return self.get_faction(faction).get_products()
 
 
 class Faction(pydantic.BaseModel):
@@ -52,6 +55,16 @@ class Faction(pydantic.BaseModel):
             for facility in self.facilities
             if product in facility.possible_products()
         ]
+
+    def get_products(self) -> set[str]:
+        return functools.reduce(
+            lambda a, b: a | b,
+            (
+                recipe.products()
+                for facility in self.facilities
+                for recipe in facility.recipes
+            ),
+        )
 
     def recipes_producing(self, product: str) -> list[Recipe]:
         return [

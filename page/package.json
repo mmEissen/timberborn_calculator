@@ -10,6 +10,7 @@
     "@types/node": "^16.18.62",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "graphviz-react": "^1.2.5",
     "node-fetch": "^2.6.1",
     "pyodide": "^0.24.1",
     "react": "^18.2.0",
