@@ -28,15 +28,13 @@ class GameData(pydantic.BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    folktails: Faction
+    factions: dict[str, Faction]
 
     def get_faction(self, name: str) -> Faction:
-        if name == "folktails":
-            return self.folktails
-        raise ValueError("Unknown faction")
+        return self.factions[name]
 
     def get_factions(self) -> list[str]:
-        return ["folktails"]
+        return sorted(self.factions)
 
     def get_products(self, faction: str) -> set[str]:
         return self.get_faction(faction).get_products()

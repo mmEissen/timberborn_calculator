@@ -1,150 +1,151 @@
-folktails:
-  facilities:
-    - name: Lumber Mill
-      power: 50
-      workers: 1
-      recipes:
-        - name: Planks
-          output:
-            Planks: 1
-          time: 1 + 1/3
-          requirements:
-            Logs: 1
-    - name: Gear Workshop
-      power: 120
-      workers: 1
-      recipes:
-        - name: Gears
-          output:
-            Gears: 1
-          time: 3
-          requirements:
-            Planks: 1
-    - name: Smelter
-      power: 200
-      workers: 1
-      recipes:
-        - name: Metal Blocks
-          output:
-            Metal Blocks: 1
-          time: 4
-          requirements:
-            Logs: 1/5
-            Scrap Metal: 2
-    - name: Bot Part Factory
-      power: 150
-      workers: 1
-      recipes:
-        - name: Bot Heads
-          output: 
-            Bot Heads: 1
-          time: 18
-          requirements:
-            Metal Blocks: 1
-            Gears: 3
-            Planks: 1
-        - name: Bot Limbs
-          output:
-            Bot Limbs: 1
-          time: 4 + 1/2
-          requirements:
-            Gears: 3
-            Planks: 1
-        - name: Bot Chassis
-          output: 
-            Bot Chassis: 1
-          time: 18
-          requirements:
-            Planks: 1
-            Metal Blocks: 1
-            Biofuel: 1
-    - name: Bot Assembler
-      power: 250
-      workers: 2
-      recipes:
-        - name: Bot
-          output: 
-            Bot: 1
-          time: 36
-          requirements:
-            Bot Chassis: 1
-            Bot Heads: 1
-            Bot Limbs: 4
-    - name: Refinery
-      power: 0
-      workers: 1
-      recipes:
-        - name: Potatoes
-          output: 
-            Biofuel: 30
-          time: 3
-          requirements:
-            Potatoes: 2
-            Water: 2
-    - name: Water Pump
-      power: 0
-      workers: 1
-      recipes:
-        - name: Water
-          output: 
-            Water: 1
-          time: 1/3
-          requirements: {}
-    - name: Potato
-      power: 0
-      workers: 0
-      recipes:
-        - name: Potatoes
-          output: 
-            Potatoes: 1
-          time: 144
-          requirements: {}
-    - name: Oak
-      power: 0
-      workers: 0
-      recipes:
-        - name: Logs
-          output: 
-            Logs: 8
-          time: 720
-          requirements: {}
-    - name: Pine
-      power: 0
-      workers: 0
-      recipes:
-        - name: Pine Resin
-          output: 
-            Pine Resin: 2
-          time: 168
-          requirements: {}
-        - name: Logs
-          output: 
-            Logs: 2
-          time: 288
-          requirements: {}
-    - name: Mine
-      power: 0
-      workers: 10
-      recipes:
-        - name: Scrap Metal
-          output: 
-            Scrap Metal: 2
-          time: 1 + 4/5
-          requirements:
-            Gears: 1
-            Treated Planks: 1
-    - name: Wood Workshop
-      power: 0
-      workers: 10
-      recipes:
-        - name: Treated Planks
-          output: 
-            Treated Planks: 1
-          time: 1 + 4/5
-          requirements:
-            Planks: 1
-            Pine Resin: 1
+factions:
+  Folktails:
+    facilities:
+      - name: Lumber Mill
+        power: 50
+        workers: 1
+        recipes:
+          - name: Planks
+            output:
+              Planks: 1
+            time: 1 + 1/3
+            requirements:
+              Logs: 1
+      - name: Gear Workshop
+        power: 120
+        workers: 1
+        recipes:
+          - name: Gears
+            output:
+              Gears: 1
+            time: 3
+            requirements:
+              Planks: 1
+      - name: Smelter
+        power: 200
+        workers: 1
+        recipes:
+          - name: Metal Blocks
+            output:
+              Metal Blocks: 1
+            time: 4
+            requirements:
+              Logs: 1/5
+              Scrap Metal: 2
+      - name: Bot Part Factory
+        power: 150
+        workers: 1
+        recipes:
+          - name: Bot Heads
+            output: 
+              Bot Heads: 1
+            time: 18
+            requirements:
+              Metal Blocks: 1
+              Gears: 3
+              Planks: 1
+          - name: Bot Limbs
+            output:
+              Bot Limbs: 1
+            time: 4 + 1/2
+            requirements:
+              Gears: 3
+              Planks: 1
+          - name: Bot Chassis
+            output: 
+              Bot Chassis: 1
+            time: 18
+            requirements:
+              Planks: 1
+              Metal Blocks: 1
+              Biofuel: 1
+      - name: Bot Assembler
+        power: 250
+        workers: 2
+        recipes:
+          - name: Bot
+            output: 
+              Bot: 1
+            time: 36
+            requirements:
+              Bot Chassis: 1
+              Bot Heads: 1
+              Bot Limbs: 4
+      - name: Refinery
+        power: 0
+        workers: 1
+        recipes:
+          - name: Potatoes
+            output: 
+              Biofuel: 30
+            time: 3
+            requirements:
+              Potatoes: 2
+              Water: 2
+      - name: Water Pump
+        power: 0
+        workers: 1
+        recipes:
+          - name: Water
+            output: 
+              Water: 1
+            time: 1/3
+            requirements: {}
+      - name: Potato
+        power: 0
+        workers: 0
+        recipes:
+          - name: Potatoes
+            output: 
+              Potatoes: 1
+            time: 144
+            requirements: {}
+      - name: Oak
+        power: 0
+        workers: 0
+        recipes:
+          - name: Logs
+            output: 
+              Logs: 8
+            time: 720
+            requirements: {}
+      - name: Pine
+        power: 0
+        workers: 0
+        recipes:
+          - name: Pine Resin
+            output: 
+              Pine Resin: 2
+            time: 168
+            requirements: {}
+          - name: Logs
+            output: 
+              Logs: 2
+            time: 288
+            requirements: {}
+      - name: Mine
+        power: 0
+        workers: 10
+        recipes:
+          - name: Scrap Metal
+            output: 
+              Scrap Metal: 2
+            time: 1 + 4/5
+            requirements:
+              Gears: 1
+              Treated Planks: 1
+      - name: Wood Workshop
+        power: 0
+        workers: 10
+        recipes:
+          - name: Treated Planks
+            output: 
+              Treated Planks: 1
+            time: 1 + 4/5
+            requirements:
+              Planks: 1
+              Pine Resin: 1
 
-  power_plants:
-    - name: Large Windmill
-      output: 192
+    power_plants:
+      - name: Large Windmill
+        output: 192
