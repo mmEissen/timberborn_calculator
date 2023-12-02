@@ -10,6 +10,13 @@ interface Node {
     recipeName: string;
     resourceNames: string[];
     productNames: string[];
+    numberFacilities: Fraction;
+}
+
+interface Fraction {
+    integer: number;
+    numerator: number;
+    denominator: number;
 }
 
 interface Edge {

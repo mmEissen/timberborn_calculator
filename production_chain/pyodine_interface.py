@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import fractions
 import functools
+import math
 from typing import Literal, TypedDict
 from production_chain import production_chain, visualize
 
@@ -37,10 +38,25 @@ class Edge(TypedDict):
     resource: str
 
 
+class Fraction(TypedDict):
+    integer: int
+    numerator: int
+    denominator: int
+
+
 def graph(faction: str, product: str) -> tuple[list[Node], list[Edge]]:
     chain = production_chain.compute_chains_for_product(
         product, 16 + fractions.Fraction("2/3"), _GAME_DATA.get_faction(faction)
     )[0]
+
+    def split_fraction(fraction: fractions.Fraction) -> Fraction:
+        integer = math.floor(fraction)
+        remainder = fraction - integer
+        return {
+            "integer": integer,
+            "numerator": remainder.numerator,
+            "denominator": remainder.denominator,
+        }
 
     def to_dicts(
         chain: production_chain.ProductionChain, path: str = ""
@@ -55,6 +71,8 @@ def graph(faction: str, product: str) -> tuple[list[Node], list[Edge]]:
             ),
             ([], []),
         )
+        
+
         nodes += [
             {
                 "id": node_id,
@@ -62,13 +80,14 @@ def graph(faction: str, product: str) -> tuple[list[Node], list[Edge]]:
                 "recipeName": chain.recipe.name,
                 "resourceNames": list(chain.inputs),
                 "productNames": list(chain.recipe.output),
+                "numberFacilities": split_fraction(chain.number_facilities)
             }
         ]
         edges += [
             {
                 "id": f"{node_id}/{resource_name}/{input_chain.facility.name}",
-                "source": node_id,
-                "target": f"{node_id}/{resource_name}/{input_chain.facility.name}",
+                "source": f"{node_id}/{resource_name}/{input_chain.facility.name}",
+                "target": node_id,
                 "resource": resource_name,
             }
             for resource_name, input_chains in chain.inputs.items()
