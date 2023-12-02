@@ -1,7 +1,16 @@
 import { useContext } from "react"
 import { Graphviz } from 'graphviz-react';
 import { TimberbornContext } from "../pyodideContext";
+import ReactFlow, {
+    addEdge,
+    MiniMap,
+    Controls,
+    Background,
+    useNodesState,
+    useEdgesState,
+} from "reactflow"
 
+import 'reactflow/dist/style.css';
 
 interface Params {
     faction: string | null;
@@ -19,7 +28,26 @@ export function ProductionView(params: Params) {
         return <></>
     }
 
-    const dot = timberborn.dotGraph(params.faction, params.product)
+    const [nodes, edges] = timberborn.graph(params.faction, params.product);
 
-    return <Graphviz dot={dot}></Graphviz>
+    console.log(nodes, edges)
+
+    const nodes1 = [
+        {
+            id: '2',
+            data: {
+            label: 'Default Node',
+            },
+            position: { x: 100, y: 100 },
+        }
+    ]
+
+    // return <Graphviz dot={dot}></Graphviz>
+    return <ReactFlow
+        nodes={nodes1}
+        fitView
+    >
+        <Controls />
+        <Background color="#aaa" gap={16} />
+    </ReactFlow>
 }

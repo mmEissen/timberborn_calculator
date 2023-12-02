@@ -3,11 +3,43 @@ import { createContext } from 'react';
 // @ts-ignore
 export const TimberbornContext = createContext<Timberborn>(null);
 
-export interface Timberborn {
-    getFactions: () => string[]
-    getProducts: (faction: string) => string[]
-    dotGraph: (faction: string, products: string) => string
+
+interface Node {
+    id: string;
+    facilityName: string;
+    recipeName: string;
+    resourceNames: string[];
+    productNames: string[];
 }
+
+interface Edge {
+    id: string;
+    source: string;
+    target: string;
+    resource: string;
+}
+
+export interface Timberborn {
+    getFactions: () => string[];
+    getProducts: (faction: string) => string[];
+    dotGraph: (faction: string, products: string) => string;
+    graph: (faction: string, products: string) => [Node[], Edge[]];
+}
+
+
+function funcToJs(pyFunc: any) {
+    return (...args : any[]) => pyFunc(...args).toJs({dict_converter : Object.fromEntries})
+}
+
+function toInterface(pyObject: any) : Timberborn {
+    return {
+        getFactions: funcToJs(pyObject.getFactions),
+        getProducts: funcToJs(pyObject.getProducts),
+        dotGraph: funcToJs(pyObject.dotGraph),
+        graph: funcToJs(pyObject.graph)
+    };
+}
+
 
 export async function createPyodideContext() : Promise<Timberborn> {
     // @ts-ignore
@@ -21,5 +53,5 @@ export async function createPyodideContext() : Promise<Timberborn> {
         from production_chain import pyodine_interface
     `);
   
-    return pyodide.globals.get("pyodine_interface");
+    return toInterface(pyodide.globals.get("pyodine_interface"));
 }
