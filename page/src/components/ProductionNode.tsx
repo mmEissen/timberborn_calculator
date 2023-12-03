@@ -20,11 +20,6 @@ interface Fraction {
     denominator: number;
 }
 
-interface Handle {
-    id: string;
-    name: string;
-}
-
 export function ProductionNode(props: Props) {
     return (
         <div className="w-64">
