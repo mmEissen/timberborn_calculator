@@ -33,6 +33,8 @@ jobs:
 
       - name: Build the react page
         working-directory: ./page
+        env:
+          PUBLIC_URL: /timberborn_calculator
         run: |
           npm install
           npm run build
