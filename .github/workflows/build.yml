@@ -37,7 +37,7 @@ jobs:
           npm install
           npm run build
           mv build _site
-          tar cfvz ../github-pages.tar.gz build
+          tar cfvz ../github-pages.tar.gz _site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v2
