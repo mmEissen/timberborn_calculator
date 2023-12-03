@@ -3,7 +3,7 @@ from __future__ import annotations
 import fractions
 import functools
 import math
-from typing import Iterable, Literal, TypedDict
+from typing import Collection, Iterable, Literal, TypedDict
 from production_chain import production_chain, visualize
 
 
@@ -44,7 +44,9 @@ class Fraction(TypedDict):
     denominator: int
 
 
-def graph(faction: str, product: str, amount: float) -> tuple[list[Node], list[Edge]]:
+def _convert_to_nodes_and_edges(
+    chains: Collection[production_chain.ProductionChain],
+) -> tuple[list[Node], list[Edge]]:
     def split_fraction(fraction: fractions.Fraction) -> Fraction:
         integer = math.floor(fraction)
         remainder = fraction - integer
@@ -96,12 +98,26 @@ def graph(faction: str, product: str, amount: float) -> tuple[list[Node], list[E
             for input_chain in input_chains
         ]
         return nodes, edges
-    
+
+    return sum_nodes_and_edges(to_nodes_and_edges(chain) for chain in chains)
+
+
+def graph(faction: str, product: str, amount: float) -> tuple[list[Node], list[Edge]]:
     chains = production_chain.compute_chains_for_product(
         product, fractions.Fraction(amount), _GAME_DATA.get_faction(faction)
     )
 
-    return sum_nodes_and_edges(to_nodes_and_edges(chain) for chain in chains)
+    return _convert_to_nodes_and_edges(chains)
+
+
+def bestGraph(
+    faction: str, product: str, amount: float
+) -> tuple[list[Node], list[Edge]]:
+    chains = production_chain.compute_chains_for_product(
+        product, fractions.Fraction(amount), _GAME_DATA.get_faction(faction)
+    )
+
+    return _convert_to_nodes_and_edges([production_chain.select_best_chain(chains)])
 
 
 def getFactions() -> str:

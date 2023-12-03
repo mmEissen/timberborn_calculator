@@ -31,6 +31,7 @@ export interface Timberborn {
     getProducts: (faction: string) => string[];
     dotGraph: (faction: string, products: string) => string;
     graph: (faction: string, products: string, amount: number) => [Node[], Edge[]];
+    bestGraph: (faction: string, products: string, amount: number) => [Node[], Edge[]];
 }
 
 
@@ -43,7 +44,8 @@ function toInterface(pyObject: any) : Timberborn {
         getFactions: funcToJs(pyObject.getFactions),
         getProducts: funcToJs(pyObject.getProducts),
         dotGraph: funcToJs(pyObject.dotGraph),
-        graph: funcToJs(pyObject.graph)
+        graph: funcToJs(pyObject.graph),
+        bestGraph: funcToJs(pyObject.bestGraph)
     };
 }
 

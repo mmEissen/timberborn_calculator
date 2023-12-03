@@ -4,6 +4,10 @@ factions:
       - name: Lumber Mill
         power: 50
         workers: 1
+        dimensions:
+          depth: 3
+          width: 2
+          height: 3
         recipes:
           - name: Planks
             output:
@@ -14,6 +18,10 @@ factions:
       - name: Gear Workshop
         power: 120
         workers: 1
+        dimensions:
+          depth: 3
+          width: 2
+          height: 3
         recipes:
           - name: Gears
             output:
@@ -24,6 +32,10 @@ factions:
       - name: Smelter
         power: 200
         workers: 1
+        dimensions:
+          depth: 2
+          width: 4
+          height: 3
         recipes:
           - name: Metal Blocks
             output:
@@ -35,6 +47,10 @@ factions:
       - name: Bot Part Factory
         power: 150
         workers: 1
+        dimensions:
+          depth: 3
+          width: 3
+          height: 2
         recipes:
           - name: Bot Heads
             output: 
@@ -62,6 +78,10 @@ factions:
       - name: Bot Assembler
         power: 250
         workers: 2
+        dimensions:
+          depth: 3
+          width: 3
+          height: 2
         recipes:
           - name: Bot
             output: 
@@ -74,6 +94,10 @@ factions:
       - name: Refinery
         power: 0
         workers: 1
+        dimensions:
+          depth: 2
+          width: 3
+          height: 4
         recipes:
           - name: Potatoes
             output: 
@@ -85,6 +109,10 @@ factions:
       - name: Water Pump
         power: 0
         workers: 1
+        dimensions:
+          depth: 2
+          width: 2
+          height: 2
         recipes:
           - name: Water
             output: 
@@ -94,6 +122,10 @@ factions:
       - name: Potato
         power: 0
         workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
         recipes:
           - name: Potatoes
             output: 
@@ -103,6 +135,10 @@ factions:
       - name: Oak
         power: 0
         workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
         recipes:
           - name: Logs
             output: 
@@ -112,6 +148,10 @@ factions:
       - name: Pine
         power: 0
         workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
         recipes:
           - name: Pine Resin
             output: 
@@ -126,6 +166,10 @@ factions:
       - name: Mine
         power: 0
         workers: 10
+        dimensions:
+          depth: 5
+          width: 5
+          height: 3
         recipes:
           - name: Scrap Metal
             output: 
@@ -137,6 +181,10 @@ factions:
       - name: Wood Workshop
         power: 0
         workers: 10
+        dimensions:
+          depth: 4
+          width: 2
+          height: 3
         recipes:
           - name: Treated Planks
             output: 

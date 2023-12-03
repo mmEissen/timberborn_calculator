@@ -3,8 +3,9 @@ import dataclasses
 from fractions import Fraction
 import functools
 import inspect
+import numbers
 from os import path
-from typing import Any
+from typing import Any, Callable, Collection
 import yaml
 
 import pydantic
@@ -92,11 +93,18 @@ class Facility(pydantic.BaseModel):
     name: str
     recipes: list[Recipe]
     workers: int
+    dimensions: Dimensions
     power: Fraction
 
     _power_to_fraction = pydantic.validator("power", pre=True, allow_reuse=True)(
         to_fraction
     )
+
+    def area(self) -> int:
+        return self.dimensions.width * self.dimensions.depth
+
+    def space(self) -> int:
+        return self.area() * self.dimensions.height
 
     def possible_products(self) -> set[str]:
         return functools.reduce(
@@ -108,6 +116,12 @@ class Facility(pydantic.BaseModel):
 
     def has_recipe(self, recipe: Recipe) -> bool:
         return recipe in self.recipes
+
+
+class Dimensions(pydantic.BaseModel):
+    depth: int
+    width: int
+    height: int
 
 
 class Recipe(pydantic.BaseModel):
@@ -174,6 +188,21 @@ class ProductionChain:
         "number_facilities", pre=True, allow_reuse=True
     )(to_fraction)
 
+    def _min(self, func: Callable[[ProductionChain], int]) -> int:
+        return func(self) + sum(min(func(p) for p in input_) for input_ in self.inputs.values())
+
+    def min_workers(self) -> int:
+        return self._min(lambda p: p.facility.workers)
+
+    def min_area(self) -> int:
+        return self._min(lambda p: p.facility.area())
+
+    def min_space(self) -> int:
+        return self._min(lambda p: p.facility.space())
+
+    def min_power(self) -> Fraction:
+        return self._min(lambda p: p.facility.power)
+
 
 def compute_chains_for_facility(
     facility_name: str, number_facilities: int, faction: Faction
@@ -218,4 +247,23 @@ def compute_chain(
         recipe=recipe,
         number_facilities=number_facilities,
         inputs=inputs,
+    )
+
+
+def select_best_chain(
+    chains: list[ProductionChain],
+    keys: Collection[Callable[[ProductionChain], numbers.Number]] = (
+        ProductionChain.min_workers,
+        ProductionChain.min_power,
+        ProductionChain.min_area,
+        ProductionChain.min_space,
+    ),
+) -> ProductionChain:
+    best = min(chains, key=lambda chain: tuple(key(chain) for key in keys))
+    return dataclasses.replace(
+        best,
+        inputs={
+            name: [select_best_chain(chains, keys)]
+            for name, chains in best.inputs.items()
+        },
     )

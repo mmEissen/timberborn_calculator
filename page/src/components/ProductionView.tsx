@@ -68,7 +68,7 @@ export function ProductionView(params: Params) {
         return <></>
     }
 
-    const [timberNodes, timberEdges] = timberborn.graph(params.faction, params.product, params.amount);
+    const [timberNodes, timberEdges] = timberborn.bestGraph(params.faction, params.product, params.amount);
 
     const nodes = timberNodes.map(timberNode => {
         return {
