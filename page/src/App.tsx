@@ -9,6 +9,7 @@ function App() {
   const [productionChain, setProductionChain] = useState<Timberborn | null>(null);
   const [faction, setFaction] = useState<string | null>(null);
   const [product, setProduct] = useState<string | null>(null);
+  const [amount, setAmount] = useState<number>(1.0);
   
   useEffect(() => {
     async function set() {
@@ -32,12 +33,15 @@ function App() {
             onFactionChanged={setFaction}
             product={product}
             onProductChanged={setProduct}
+            amount={amount}
+            onAmountChanged={setAmount}
           ></ProductionMenu>
         </div>
         <div className='grow h-full bg-fuchsia-50'>
           <ProductionView
             faction={faction}
             product={product}
+            amount={amount > 0 ? amount : 1}
           ></ProductionView>
         </div>
       </div>

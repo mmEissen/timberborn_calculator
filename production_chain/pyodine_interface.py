@@ -44,9 +44,9 @@ class Fraction(TypedDict):
     denominator: int
 
 
-def graph(faction: str, product: str) -> tuple[list[Node], list[Edge]]:
+def graph(faction: str, product: str, amount: float) -> tuple[list[Node], list[Edge]]:
     chain = production_chain.compute_chains_for_product(
-        product, 16 + fractions.Fraction("2/3"), _GAME_DATA.get_faction(faction)
+        product, fractions.Fraction(amount), _GAME_DATA.get_faction(faction)
     )[0]
 
     def split_fraction(fraction: fractions.Fraction) -> Fraction:

@@ -30,7 +30,7 @@ export interface Timberborn {
     getFactions: () => string[];
     getProducts: (faction: string) => string[];
     dotGraph: (faction: string, products: string) => string;
-    graph: (faction: string, products: string) => [Node[], Edge[]];
+    graph: (faction: string, products: string, amount: number) => [Node[], Edge[]];
 }
 
 

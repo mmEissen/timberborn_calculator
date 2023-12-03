@@ -12,6 +12,7 @@ import { ProductionNode } from "./ProductionNode";
 interface Params {
     faction: string | null;
     product: string | null;
+    amount: number;
 }
 
 const nodeTypes = {
@@ -67,7 +68,7 @@ export function ProductionView(params: Params) {
         return <></>
     }
 
-    const [timberNodes, timberEdges] = timberborn.graph(params.faction, params.product);
+    const [timberNodes, timberEdges] = timberborn.graph(params.faction, params.product, params.amount);
 
     const nodes = timberNodes.map(timberNode => {
         return {

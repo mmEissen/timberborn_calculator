@@ -7,6 +7,8 @@ interface Params {
     onProductChanged: (v: string | null) => any;
     faction: string | null;
     onFactionChanged: (v: string | null) => any;
+    amount: number;
+    onAmountChanged: (v: number) => any;
 }
 
 export function ProductionMenu(params: Params) {
@@ -40,6 +42,10 @@ export function ProductionMenu(params: Params) {
                     productName => {return <option key={productName} value={productName}>{productName}</option>}
                 )}
             </select>
+        </div>
+        <div>
+            Amount:
+            <input type="number" value={params.amount} onChange={e => params.onAmountChanged(+e.target.value)} />
         </div>
     </div>
 }
