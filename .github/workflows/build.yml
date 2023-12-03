@@ -33,4 +33,6 @@ jobs:
 
       - name: Build the react page
         working-directory: ./page
-        run: npm run build
+        run: |
+          npm install --production
+          npm run build
