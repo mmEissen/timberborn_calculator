@@ -3,7 +3,7 @@ from __future__ import annotations
 import fractions
 import functools
 import math
-from typing import Literal, TypedDict
+from typing import Iterable, Literal, TypedDict
 from production_chain import production_chain, visualize
 
 
@@ -45,10 +45,6 @@ class Fraction(TypedDict):
 
 
 def graph(faction: str, product: str, amount: float) -> tuple[list[Node], list[Edge]]:
-    chain = production_chain.compute_chains_for_product(
-        product, fractions.Fraction(amount), _GAME_DATA.get_faction(faction)
-    )[0]
-
     def split_fraction(fraction: fractions.Fraction) -> Fraction:
         integer = math.floor(fraction)
         remainder = fraction - integer
@@ -58,20 +54,26 @@ def graph(faction: str, product: str, amount: float) -> tuple[list[Node], list[E
             "denominator": remainder.denominator,
         }
 
-    def to_dicts(
+    def sum_nodes_and_edges(
+        graphs: Iterable[tuple[list[Node], list[Edge]]]
+    ) -> tuple[list[Node], list[Edge]]:
+        return functools.reduce(
+            lambda left, right: (left[0] + right[0], left[1] + right[1]),
+            graphs,
+            ([], []),
+        )
+
+    def to_nodes_and_edges(
         chain: production_chain.ProductionChain, path: str = ""
     ) -> tuple[list[Node], list[Edge]]:
         node_id = f"{path}/{chain.facility.name}"
-        nodes, edges = functools.reduce(
-            lambda left, right: (left[0] + right[0], left[1] + right[1]),
+        nodes, edges = sum_nodes_and_edges(
             (
-                to_dicts(input_chain, path=f"{node_id}/{resource_name}")
+                to_nodes_and_edges(input_chain, path=f"{node_id}/{resource_name}")
                 for resource_name, input_chains in chain.inputs.items()
                 for input_chain in input_chains
-            ),
-            ([], []),
+            )
         )
-        
 
         nodes += [
             {
@@ -80,7 +82,7 @@ def graph(faction: str, product: str, amount: float) -> tuple[list[Node], list[E
                 "recipeName": chain.recipe.name,
                 "resourceNames": list(chain.inputs),
                 "productNames": list(chain.recipe.output),
-                "numberFacilities": split_fraction(chain.number_facilities)
+                "numberFacilities": split_fraction(chain.number_facilities),
             }
         ]
         edges += [
@@ -94,8 +96,12 @@ def graph(faction: str, product: str, amount: float) -> tuple[list[Node], list[E
             for input_chain in input_chains
         ]
         return nodes, edges
+    
+    chains = production_chain.compute_chains_for_product(
+        product, fractions.Fraction(amount), _GAME_DATA.get_faction(faction)
+    )
 
-    return to_dicts(chain)
+    return sum_nodes_and_edges(to_nodes_and_edges(chain) for chain in chains)
 
 
 def getFactions() -> str:
