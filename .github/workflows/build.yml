@@ -32,4 +32,5 @@ jobs:
       - uses: actions/setup-node@v4
 
       - name: Build the react page
+        working-directory: ./page
         run: npm run build
