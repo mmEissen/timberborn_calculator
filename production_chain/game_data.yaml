@@ -1,6 +1,212 @@
 factions:
   Folktails:
     facilities:
+    # Crops
+      - name: Potato
+        power: 0
+        workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
+        recipes:
+          - name: Potatoes
+            output: 
+              Potatoes: 1
+            time: 144
+            requirements: {}
+      - name: Spadderdock
+        power: 0
+        workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
+        recipes:
+          - name: Spadderdock
+            output: 
+              Spadderdock: 3
+            time: 288
+            requirements: {}
+      - name: Wheat
+        power: 0
+        workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
+        recipes:
+          - name: Wheat
+            output: 
+              Wheat: 3
+            time: 240
+            requirements: {}
+
+    # Trees
+      - name: Birch
+        power: 0
+        workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
+        recipes:
+          - name: Logs
+            output: 
+              Logs: 1
+            time: 216
+            requirements: {}
+      - name: Oak
+        power: 0
+        workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
+        recipes:
+          - name: Logs
+            output: 
+              Logs: 8
+            time: 720
+            requirements: {}
+      - name: Pine
+        power: 0
+        workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
+        recipes:
+          - name: Pine Resin
+            output: 
+              Pine Resin: 2
+            time: 168
+            requirements: {}
+          - name: Logs
+            output: 
+              Logs: 2
+            time: 288
+            requirements: {}
+      - name: Maple
+        power: 0
+        workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
+        recipes:
+          - name: Maple Syrup
+            output: 
+              Maple Syrup: 3
+            time: 288
+            requirements: {}
+          - name: Logs
+            output: 
+              Logs: 6
+            time: 671
+            requirements: {}
+      - name: Chestnut Tree
+        power: 0
+        workers: 0
+        dimensions:
+          depth: 1
+          width: 1
+          height: 1
+        recipes:
+          - name: Chestnuts
+            output: 
+              Chestnuts: 3
+            time: 192
+            requirements: {}
+          - name: Logs
+            output: 
+              Logs: 4
+            time: 576
+            requirements: {}
+
+    
+    # Food
+      - name: Grill
+        power: 0
+        workers: 1
+        dimensions:
+          depth: 2
+          width: 2
+          height: 3
+        recipes:
+          - name: Grilled Potatoes
+            output:
+              Grilled Potatoes: 4
+            time: 13/25
+            requirements:
+              Potatoes: 1
+              Logs: 1/10
+          - name: Grilled Chestnuts
+            output:
+              Grilled Chestnuts: 2
+            time: 1/3
+            requirements:
+              Chestnuts: 1
+              Logs: 1/10
+          - name: Grilled Spadderdocks
+            output:
+              Grilled Spadderdocks: 3
+            time: 2/5
+            requirements:
+              Spadderdocks: 1
+              Logs: 1/10
+      - name: Gristmill
+        power: 60
+        workers: 1
+        dimensions:
+          depth: 3
+          width: 2
+          height: 3
+        recipes:
+          - name: Wheat Flour
+            output:
+              Wheat Flour: 1
+            time: 39/50
+            requirements:
+              Wheat: 1
+          - name: Cattail Flower
+            output:
+              Cattail Flower: 1
+            time: 2/3
+            requirements:
+              Cattail: 1
+      - name: Bakery
+        power: 0
+        workers: 1
+        dimensions:
+          depth: 3
+          width: 2
+          height: 4
+        recipes:
+          - name: Bread
+            output:
+              Bread: 5
+            time: 21/50
+            requirements:
+              Wheat: 1
+              Logs: 1/10
+          - name: Cattail Crackers
+            output:
+              Cattail Crackers: 4
+            time: 1/2
+            requirements:
+              Cattail Flour: 1
+              Logs: 1/10
+          - name: Maple Pastries
+            output:
+              Maple Pastries: 3
+            time: 11/20
+            requirements:
+              Wheat Flour: 1
+              Maple Syrup: 1
+              Logs: 1/10
+
+    # Wood
       - name: Lumber Mill
         power: 50
         workers: 1
@@ -29,6 +235,51 @@ factions:
             time: 3
             requirements:
               Planks: 1
+      - name: Paper Mill
+        power: 80
+        workers: 1
+        dimensions:
+          depth: 3
+          width: 2
+          height: 2
+        recipes:
+          - name: Paper
+            output:
+              Paper: 2
+            time: 1 + 3/5
+            requirements:
+              Logs: 1
+      - name: Printing Press
+        power: 150
+        workers: 1
+        dimensions:
+          depth: 4
+          width: 2
+          height: 2
+        recipes:
+          - name: Book
+            output:
+              Book: 1
+            time: 1 + 1/2
+            requirements:
+              Paper: 1
+      - name: Wood Workshop
+        power: 0
+        workers: 10
+        dimensions:
+          depth: 4
+          width: 2
+          height: 3
+        recipes:
+          - name: Treated Planks
+            output: 
+              Treated Planks: 1
+            time: 1 + 4/5
+            requirements:
+              Planks: 1
+              Pine Resin: 1
+    
+    # Metal
       - name: Smelter
         power: 200
         workers: 1
@@ -44,6 +295,23 @@ factions:
             requirements:
               Logs: 1/5
               Scrap Metal: 2
+      - name: Mines
+        power: 0
+        workers: 10
+        dimensions:
+          depth: 5
+          width: 5
+          height: 3
+        recipes:
+          - name: Scrap Metal
+            output: 
+              Scrap Metal: 2
+            time: 1 + 4/5
+            requirements:
+              Gears: 1
+              Treated Planks: 1
+
+    # Science
       - name: Bot Part Factory
         power: 150
         workers: 1
@@ -106,6 +374,8 @@ factions:
             requirements:
               Potatoes: 2
               Water: 2
+
+    # Water
       - name: Water Pump
         power: 0
         workers: 1
@@ -119,80 +389,7 @@ factions:
               Water: 1
             time: 1/3
             requirements: {}
-      - name: Potato
-        power: 0
-        workers: 0
-        dimensions:
-          depth: 1
-          width: 1
-          height: 1
-        recipes:
-          - name: Potatoes
-            output: 
-              Potatoes: 1
-            time: 144
-            requirements: {}
-      - name: Oak
-        power: 0
-        workers: 0
-        dimensions:
-          depth: 1
-          width: 1
-          height: 1
-        recipes:
-          - name: Logs
-            output: 
-              Logs: 8
-            time: 720
-            requirements: {}
-      - name: Pine
-        power: 0
-        workers: 0
-        dimensions:
-          depth: 1
-          width: 1
-          height: 1
-        recipes:
-          - name: Pine Resin
-            output: 
-              Pine Resin: 2
-            time: 168
-            requirements: {}
-          - name: Logs
-            output: 
-              Logs: 2
-            time: 288
-            requirements: {}
-      - name: Mine
-        power: 0
-        workers: 10
-        dimensions:
-          depth: 5
-          width: 5
-          height: 3
-        recipes:
-          - name: Scrap Metal
-            output: 
-              Scrap Metal: 2
-            time: 1 + 4/5
-            requirements:
-              Gears: 1
-              Treated Planks: 1
-      - name: Wood Workshop
-        power: 0
-        workers: 10
-        dimensions:
-          depth: 4
-          width: 2
-          height: 3
-        recipes:
-          - name: Treated Planks
-            output: 
-              Treated Planks: 1
-            time: 1 + 4/5
-            requirements:
-              Planks: 1
-              Pine Resin: 1
+      
 
     power_plants:
       - name: Large Windmill

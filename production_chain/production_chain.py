@@ -189,7 +189,9 @@ class ProductionChain:
     )(to_fraction)
 
     def _min(self, func: Callable[[ProductionChain], int]) -> int:
-        return func(self) + sum(min(func(p) for p in input_) for input_ in self.inputs.values())
+        return func(self) * self.number_facilities + sum(
+            min(func(p) * p.number_facilities for p in input_) for input_ in self.inputs.values()
+        )
 
     def min_workers(self) -> int:
         return self._min(lambda p: p.facility.workers)
